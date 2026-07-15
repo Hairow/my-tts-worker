@@ -139,12 +139,12 @@ async function handleRequest(request, env) {
     } else if (path === "/" && request.method === "GET") {
         // 浏览器访问返回页面
         return new Response(getHTML(), {
-            headers: { "Content-Type": "text/html; charset=utf-8" },
+            headers: { "Content-Type": "text/html; charset=utf-8", ...makeCORSHeaders() },
         });
     }
 
     // 默认返回 404
-    return new Response("Not Found", { status: 404 });
+    return new Response("Not Found", { status: 404, headers: makeCORSHeaders() });
 }
 
 async function handleOptions() {
@@ -294,14 +294,6 @@ async function getEndpoint() {
         }
         throw error;
     }
-}
-
-function addCORSHeaders(response) {
-    const newHeaders = new Headers(response.headers);
-    for (const [key, value] of Object.entries(makeCORSHeaders())) {
-        newHeaders.set(key, value);
-    }
-    return new Response(response.body, { ...response, headers: newHeaders });
 }
 
 function makeCORSHeaders() {
