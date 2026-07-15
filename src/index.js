@@ -137,7 +137,7 @@ async function routeRequest(request, env) {
             models: [
                 { id: "tts-1", name: "TTS-1", description: "Edge TTS voice synthesis" },
             ],
-            voices: Object.entries(VOICE_MAPPING).map(([id, name]) => ({ id, name })),
+            voices: Object.keys(VOICE_MAPPING).map(id => ({ id, name: VOICE_MAPPING[id] })),
         }), {
             headers: { "Content-Type": "application/json" },
         });
