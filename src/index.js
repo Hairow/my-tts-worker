@@ -6,7 +6,6 @@
  *   Body: { "model": "tts-1", "input": "你好世界", "voice": "alloy" }
  *
  * 语音映射: alloy/echo/fable/onyx/nova/shimmer → 对应的中文语音
- * 也可直接使用完整语音名，如: zh-CN-XiaoxiaoNeural
  */
 
 const encoder = new TextEncoder();
