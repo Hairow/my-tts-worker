@@ -150,7 +150,12 @@ async function handleRequest(request, env) {
 async function handleOptions() {
     return new Response(null, {
         status: 204,
-        headers: makeCORSHeaders()
+        headers: {
+            ...makeCORSHeaders(),
+            "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Max-Age": "86400"
+        }
     });
 }
 
@@ -297,12 +302,7 @@ async function getEndpoint() {
 }
 
 function makeCORSHeaders() {
-    return {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Max-Age": "86400"
-    };
+    return { "Access-Control-Allow-Origin": "*" };
 }
 
 async function hmacSha256(key, data) {
