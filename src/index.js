@@ -365,24 +365,6 @@ function dateFormat() {
     return formattedDate.toLowerCase();
 }
 
-// 添加请求超时控制
-async function fetchWithTimeout(url, options, timeout = 30000) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-
-    try {
-        const response = await fetch(url, {
-            ...options,
-            signal: controller.signal
-        });
-        clearTimeout(id);
-        return response;
-    } catch (error) {
-        clearTimeout(id);
-        throw error;
-    }
-}
-
 function getHTML() {
     const voiceOptions = Object.entries(VOICE_MAPPING)
         .map(([id, name]) => `<option value="${id}">${id} (${name})</option>`)
