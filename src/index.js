@@ -117,9 +117,8 @@ async function handleRequest(request, env) {
             );
 
             // getVoice 内部已 catch 错误并返回 500 Response，这里加 CORS 头
-            const headers = new Headers(response.headers);
-            headers.set("Access-Control-Allow-Origin", "*");
-            return new Response(response.body, { status: response.status, headers });
+            response.headers.set("Access-Control-Allow-Origin", "*");
+            return response;
 
         } catch (error) {
             console.error("Error:", error);
