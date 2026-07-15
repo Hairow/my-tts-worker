@@ -33,15 +33,20 @@ const VOICE_MAPPING = {
 
 export default {
     async fetch(request, env, ctx) {
-        return handleRequest(request, env);
+        if (request.method === "OPTIONS") {
+            return handleOptions();
+        }
+
+        const response = await routeRequest(request, env);
+        response.headers.set("Access-Control-Allow-Origin", "*");
+        return response;
     }
 };
 
-async function handleRequest(request, env) {
+
+
+async function routeRequest(request, env) {
     const API_KEY = env.API_KEY;
-    if (request.method === "OPTIONS") {
-        return handleOptions();
-    }
 
     // 只在设置了 API_KEY 的情况下才验证
     if (API_KEY) {
@@ -60,10 +65,7 @@ async function handleRequest(request, env) {
                 }
             }), {
                 status: 401,
-                headers: {
-                    "Content-Type": "application/json",
-                    ...makeCORSHeaders()
-                }
+                headers: { "Content-Type": "application/json" }
             });
         }
     }
@@ -73,7 +75,7 @@ async function handleRequest(request, env) {
 
     if (path === "/v1/audio/speech") {
         if (request.method !== "POST") {
-            return new Response("Method Not Allowed", { status: 405, headers: makeCORSHeaders() });
+            return new Response("Method Not Allowed", { status: 405 });
         }
         try {
             const requestBody = await request.json();
@@ -97,7 +99,7 @@ async function handleRequest(request, env) {
                     }
                 }), {
                     status: 400,
-                    headers: { "Content-Type": "application/json", ...makeCORSHeaders() }
+                    headers: { "Content-Type": "application/json" }
                 });
             }
 
@@ -106,7 +108,7 @@ async function handleRequest(request, env) {
 
             const rate = ((speed - 1) * 100).toFixed(0);
             const numPitch = ((pitch - 1) * 100).toFixed(0);
-            const response = await getVoice(
+            return await getVoice(
                 input,
                 voice,
                 rate,
@@ -115,10 +117,6 @@ async function handleRequest(request, env) {
                 "audio-24khz-48kbitrate-mono-mp3",
                 false
             );
-
-            // getVoice 内部已 catch 错误并返回 500 Response，这里加 CORS 头
-            response.headers.set("Access-Control-Allow-Origin", "*");
-            return response;
 
         } catch (error) {
             console.error("Error:", error);
@@ -131,10 +129,7 @@ async function handleRequest(request, env) {
                 }
             }), {
                 status: 500,
-                headers: {
-                    "Content-Type": "application/json",
-                    ...makeCORSHeaders()
-                }
+                headers: { "Content-Type": "application/json" }
             });
         }
     } else if (path === "/voices" && request.method === "GET") {
@@ -144,28 +139,23 @@ async function handleRequest(request, env) {
             ],
             voices: Object.entries(VOICE_MAPPING).map(([id, name]) => ({ id, name })),
         }), {
-            headers: { "Content-Type": "application/json", ...makeCORSHeaders() },
+            headers: { "Content-Type": "application/json" },
         });
     } else if (path === "/" && request.method === "GET") {
-        // 浏览器访问返回页面
         return new Response(getHTML(), {
-            headers: { "Content-Type": "text/html; charset=utf-8", ...makeCORSHeaders() },
+            headers: { "Content-Type": "text/html; charset=utf-8" },
         });
     }
 
     // 默认返回 404
-    return new Response("Not Found", { status: 404, headers: makeCORSHeaders() });
-}
-
-function makeCORSHeaders() {
-    return { "Access-Control-Allow-Origin": "*" };
+    return new Response("Not Found", { status: 404 });
 }
 
 async function handleOptions() {
     return new Response(null, {
         status: 204,
         headers: {
-            ...makeCORSHeaders(),
+            "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
             "Access-Control-Max-Age": "86400"
