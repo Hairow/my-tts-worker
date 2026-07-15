@@ -6,6 +6,17 @@ let tokenInfo = {
     expiredAt: null
 };
 
+/**
+ * 调用 Microsoft Edge TTS 进行语音合成，长文本自动分段后拼接
+ * @param {string} text - 要合成的文本
+ * @param {string} [voiceName="zh-CN-XiaoxiaoNeural"] - 语音名称
+ * @param {number} [rate=0] - 语速百分比，0 为正常（如 -50 为半速、50 为 1.5 倍速）
+ * @param {number} [pitch=0] - 音调百分比，0 为正常
+ * @param {string} [style="general"] - 语音风格
+ * @param {string} [outputFormat="audio-24khz-48kbitrate-mono-mp3"] - 输出音频格式
+ * @param {boolean} [download=false] - 是否触发浏览器下载
+ * @returns {Response} 成功返回 audio/mpeg 的 Response，失败返回 application/json 的 500 Response
+ */
 export async function getVoice(text, voiceName = "zh-CN-XiaoxiaoNeural", rate = 0, pitch = 0, style = "general", outputFormat = "audio-24khz-48kbitrate-mono-mp3", download = false) {
     try {
         const maxChunkSize = 2000;
