@@ -46,7 +46,7 @@ export default {
 async function handleRequest(request, env) {
     const API_KEY = env.API_KEY;
     if (request.method === "OPTIONS") {
-        return handleOptions(request);
+        return handleOptions();
     }
 
     // 只在设置了 API_KEY 的情况下才验证
@@ -147,14 +147,10 @@ async function handleRequest(request, env) {
     return new Response("Not Found", { status: 404 });
 }
 
-async function handleOptions(request) {
+async function handleOptions() {
     return new Response(null, {
         status: 204,
-        headers: {
-            ...makeCORSHeaders(),
-            "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-            "Access-Control-Allow-Headers": request.headers.get("Access-Control-Request-Headers") || "Authorization"
-        }
+        headers: makeCORSHeaders()
     });
 }
 
@@ -312,7 +308,7 @@ function makeCORSHeaders() {
     return {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, x-api-key",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Access-Control-Max-Age": "86400"
     };
 }
