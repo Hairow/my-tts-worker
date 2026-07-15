@@ -225,6 +225,7 @@ async function getVoice(text, voiceName = "zh-CN-XiaoxiaoNeural", rate = 0, pitc
 async function getAudioChunk(text, voiceName, rate, pitch, style, outputFormat) {
     const endpoint = await getEndpoint();
     const url = `https://${endpoint.r}.tts.speech.microsoft.com/cognitiveservices/v1`;
+    console.log('endpoint', endpoint)
 
     const response = await fetch(url, {
         method: "POST",
