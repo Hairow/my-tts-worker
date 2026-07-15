@@ -93,6 +93,20 @@ async function handleRequest(request, env) {
                 style = "general"
             } = requestBody;
 
+            if (!input || !input.trim()) {
+                return new Response(JSON.stringify({
+                    error: {
+                        message: "Missing required parameter: 'input'",
+                        type: "invalid_request_error",
+                        param: "input",
+                        code: null
+                    }
+                }), {
+                    status: 400,
+                    headers: { "Content-Type": "application/json", ...makeCORSHeaders() }
+                });
+            }
+
             // 添加语音名称映射
             voice = VOICE_MAPPING[voice] || voice;
 

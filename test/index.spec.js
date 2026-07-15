@@ -61,7 +61,7 @@ describe("Edge TTS Worker", () => {
 
   // ========== POST 参数验证 ==========
 
-  it("POST /v1/audio/speech missing input returns 500", async () => {
+  it("POST /v1/audio/speech missing input returns 400", async () => {
     const request = new Request("http://example.com/v1/audio/speech", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,7 +70,9 @@ describe("Edge TTS Worker", () => {
     const ctx = createExecutionContext();
     const response = await worker.fetch(request, env, ctx);
     await waitOnExecutionContext(ctx);
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.error.message).toContain("input");
   });
 
   it("POST /v1/audio/speech invalid JSON returns 500", async () => {
