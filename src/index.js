@@ -29,15 +29,20 @@ const VOICE_MAPPING = {
     'natasha': 'en-AU-NatashaNeural',
 };
 
+function addCorsHeaders(response) {
+    response.headers.set("Access-Control-Allow-Origin", "*");
+    response.headers.set("Access-Control-Allow-Methods", "GET,HEAD,POST,OPTIONS");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    response.headers.set("Access-Control-Max-Age", "86400");
+    return response;
+}
+
 export default {
     async fetch(request, env, ctx) {
         if (request.method === "OPTIONS") {
-            return handleOptions();
+            return addCorsHeaders(new Response(null, { status: 204 }));
         }
-
-        const response = await routeRequest(request, env);
-        response.headers.set("Access-Control-Allow-Origin", "*");
-        return response;
+        return addCorsHeaders(await routeRequest(request, env));
     }
 };
 
@@ -128,18 +133,6 @@ async function routeRequest(request, env) {
     console.error('没有匹配的请求')
     // 默认返回 404
     return new Response("Not Found", { status: 404 });
-}
-
-async function handleOptions() {
-    return new Response(null, {
-        status: 204,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Max-Age": "86400"
-        }
-    });
 }
 
 
