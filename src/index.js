@@ -147,6 +147,7 @@ async function routeRequest(request, env) {
         });
     }
 
+    console.error('没有匹配的请求')
     // 默认返回 404
     return new Response("Not Found", { status: 404 });
 }
