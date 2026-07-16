@@ -10,7 +10,8 @@
 
 
 
-import { getVoice } from "./edge-tts";
+//非npm包
+//import { getVoice } from "./edge-tts";
 
 // OpenAI 兼容语音名称 → Edge TTS 语音名称映射
 const VOICE_MAPPING = {
@@ -83,10 +84,8 @@ async function routeRequest(request, env) {
                 model = "tts-1",
                 input,
                 voice = "zh-CN-XiaoxiaoNeural",
-                response_format = "mp3",
                 speed = 1.0,
                 pitch = 1.0,
-                style = "general"
             } = requestBody;
 
             if (!input || !input.trim()) {
@@ -107,15 +106,14 @@ async function routeRequest(request, env) {
             voice = VOICE_MAPPING[voice] || voice;
 
             const rate = ((speed - 1) * 100).toFixed(0);
-            const numPitch = ((pitch - 1) * 100).toFixed(0);
+            pitch = ((pitch - 1) * 100).toFixed(0);
+
+            //非npm包的版本
             return await getVoice(
                 input,
                 voice,
                 rate,
-                numPitch,
-                style,
-                "audio-24khz-48kbitrate-mono-mp3",
-                false
+                pitch
             );
 
         } catch (error) {
