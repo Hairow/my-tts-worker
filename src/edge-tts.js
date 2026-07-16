@@ -17,7 +17,7 @@ let tokenInfo = {
  * @param {boolean} [download=false] - 是否触发浏览器下载
  * @returns {Response} 成功返回 audio/mpeg 的 Response，失败返回 application/json 的 500 Response
  */
-export async function getVoice(text, voiceName = "zh-CN-XiaoxiaoNeural", rate = 0, pitch = 0, style = "general", outputFormat = "audio-24khz-48kbitrate-mono-mp3", download = false) {
+export async function tts(text, voiceName = "zh-CN-XiaoxiaoNeural", rate = 0, pitch = 0, style = "general", outputFormat = "audio-24khz-48kbitrate-mono-mp3", download = false) {
     try {
         const maxChunkSize = 2000;
         const chunks = [];

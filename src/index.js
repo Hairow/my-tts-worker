@@ -8,7 +8,7 @@
  * 语音映射: alloy/echo/fable/onyx/nova/shimmer → 对应的中文语音
  */
 
-import { getVoice } from "./edge-tts";
+import { tts } from "./edge-tts";
 
 // OpenAI 兼容语音名称 → Edge TTS 语音名称映射
 const VOICE_MAPPING = {
@@ -105,7 +105,7 @@ async function routeRequest(request, env) {
             const rate = ((speed - 1) * 100).toFixed(0);
             pitch = ((pitch - 1) * 100).toFixed(0);
 
-            return await getVoice(input, voice, rate, pitch);
+            return await tts(input, voice, rate, pitch);
 
         } catch (error) {
             console.error("Error:", error);
