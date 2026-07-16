@@ -47,19 +47,14 @@ export async function tts(text, voiceName = "zh-CN-XiaoxiaoNeural", rate = 0, pi
 
     } catch (error) {
         console.error("语音合成失败:", error);
-        return new Response(JSON.stringify({
+        return Response.json({
             error: {
                 message: error.message,
                 type: "api_error",
                 param: null,
                 code: "edge_tts_error"
             }
-        }), {
-            status: 500,
-            headers: {
-                "Content-Type": "application/json",
-            }
-        });
+        }, { status: 500 });
     }
 }
 

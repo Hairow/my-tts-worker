@@ -54,17 +54,14 @@ async function routeRequest(request, env) {
             : null;
 
         if (apiKey !== API_KEY) {
-            return new Response(JSON.stringify({
+            return Response.json({
                 error: {
                     message: "Invalid API key. Use 'Authorization: Bearer your-api-key' header",
                     type: "invalid_request_error",
                     param: null,
                     code: "invalid_api_key"
                 }
-            }), {
-                status: 401,
-                headers: { "Content-Type": "application/json" }
-            });
+            }, { status: 401 });
         }
     }
 
@@ -86,17 +83,14 @@ async function routeRequest(request, env) {
             } = requestBody;
 
             if (!input || !input.trim()) {
-                return new Response(JSON.stringify({
+                return Response.json({
                     error: {
                         message: "Missing required parameter: 'input'",
                         type: "invalid_request_error",
                         param: "input",
                         code: null
                     }
-                }), {
-                    status: 400,
-                    headers: { "Content-Type": "application/json" }
-                });
+                }, { status: 400 });
             }
 
             // 添加语音名称映射
@@ -109,26 +103,21 @@ async function routeRequest(request, env) {
 
         } catch (error) {
             console.error("Error:", error);
-            return new Response(JSON.stringify({
+            return Response.json({
                 error: {
                     message: error.message,
                     type: "api_error",
                     param: null,
                     code: "edge_tts_error"
                 }
-            }), {
-                status: 500,
-                headers: { "Content-Type": "application/json" }
-            });
+            }, { status: 500 });
         }
     } else if (path === "/voices" && request.method === "GET") {
-        return new Response(JSON.stringify({
+        return Response.json({
             models: [
                 { id: "tts-1", name: "TTS-1", description: "Edge TTS voice synthesis" },
             ],
             voices: Object.keys(VOICE_MAPPING).map(id => ({ id, name: VOICE_MAPPING[id] })),
-        }), {
-            headers: { "Content-Type": "application/json" },
         });
     } else if (path === "/" && request.method === "GET") {
         return new Response(getHTML(), {
