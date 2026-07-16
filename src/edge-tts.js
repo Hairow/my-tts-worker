@@ -67,7 +67,7 @@ export async function getVoice(text, voiceName = "zh-CN-XiaoxiaoNeural", rate = 
 async function getAudioChunk(text, voiceName, rate, pitch, style, outputFormat) {
     const endpoint = await getEndpoint();
     const url = `https://${endpoint.r}.tts.speech.microsoft.com/cognitiveservices/v1`;
-    console.log('endpoint', endpoint)
+    console.debug('endpoint', endpoint)
 
     const response = await fetch(url, {
         method: "POST",
@@ -104,8 +104,12 @@ async function getEndpoint() {
 
     // 检查token是否有效（提前5分钟刷新）
     if (tokenInfo.token && tokenInfo.expiredAt && now < tokenInfo.expiredAt - TOKEN_REFRESH_BEFORE_EXPIRY) {
-        console.log(`使用缓存的token，剩余 ${((tokenInfo.expiredAt - now) / 60).toFixed(1)} 分钟`);
+        console.debug(`使用缓存的token，剩余 ${((tokenInfo.expiredAt - now) / 60).toFixed(1)} 分钟`);
         return tokenInfo.endpoint;
+    }
+
+    if (!tokenInfo.token) {
+        console.debug('没有缓存token')
     }
 
     // 获取新token
@@ -144,14 +148,14 @@ async function getEndpoint() {
             expiredAt: decodedJwt.exp
         };
 
-        console.log(`获取新token成功，有效期 ${((decodedJwt.exp - now) / 60).toFixed(1)} 分钟`);
+        console.debug(`获取新token成功，有效期 ${((decodedJwt.exp - now) / 60).toFixed(1)} 分钟`);
         return data;
 
     } catch (error) {
         console.error("获取endpoint失败:", error);
         // 如果有缓存的token，即使过期也尝试使用
         if (tokenInfo.token) {
-            console.log("使用过期的缓存token");
+            console.debug("使用过期的缓存token");
             return tokenInfo.endpoint;
         }
         throw error;
